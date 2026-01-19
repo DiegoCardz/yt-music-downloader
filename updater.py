@@ -1,3 +1,4 @@
+#%%
 from mutagen.mp4 import MP4, MP4Cover
 import requests
 import os
@@ -24,40 +25,36 @@ def change_M4A_file_properties(file_path: str, metadata:dict) -> bool:
         if metadata.get("track"):
             print(f"Setting track name to: {metadata['track']}")
             audio["\xa9nam"] = [metadata["track"]]
-        # Subtitle (Legendas)
-        if metadata.get("subtitle"):
-            print(f"Setting subtitle to: {metadata['subtitle']}")
-            audio["\xa9sub"] = [metadata["subtitle"]]
+        
+        if metadata.get("subtitles_url"):
+            print(f"Setting lyrics to: {str(metadata['subtitles_url'])[:20]}...")
+            audio["\xa9lyr"] = [metadata["subtitles_url"]] # Subtitle (Legendas)
         # Rating (Classificação)
         # Keywords (Marcas)
-        # Commentary (Comentários)
-        if metadata.get("commentary"):
-            print(f"Setting commentary to: {metadata['commentary']}")
-            audio["\xa9cmt"] = [metadata["commentary"]]
-        #------------------------------------------------------------------------------
-        # Artist name
+        if metadata.get("url"):
+            print(f"Setting commentary to: {metadata['url']}")
+            audio["\xa9cmt"] = [metadata["url"]] # Commentary (Comentários)
+        
         if metadata.get("artist"):
             print(f"Setting artist to: {metadata['artist']}")
             audio["\xa9ART"] = [metadata["artist"]]  # Artist
-        # Participating artists
+        
         if metadata.get("participating_artists"):
             print(f"Setting participating artists to: {metadata['participating_artists']}")
-            audio["aART"] = [metadata["participating_artists"]]  # Album Artist
+            audio["aART"] = [metadata["participating_artists"]]  # Participating Artists
         
-        # Origin Provider URL
-        if metadata.get("url"):
-            print(f"Setting origin provider URL to: {metadata['url']}")
-            audio["purl"] = [metadata["url"]]  # Origin Provider URL
-
-        # Album name
+        if metadata.get("original_song"):
+            print(f"Setting description to: {metadata['original_song']}")
+            audio["desc"] = [metadata["original_song"]]  # Origin Provider URL
+        
         if metadata.get("album"):
             print(f"Setting album to: {metadata['album']}")
             audio["\xa9alb"] = [metadata["album"]]  # Album
+        
         if metadata.get("year"):
             print(f"Setting year to: {metadata['year']}")
             audio["\xa9day"] = [str(metadata["year"])]  # Year
         
-
         # Add album cover if provided
         if metadata.get("picture"):
             print(f"Setting album cover from: {metadata['picture']}")

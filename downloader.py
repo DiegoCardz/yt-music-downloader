@@ -29,7 +29,7 @@ def print_video_info(info:dict, print_len:int=60, select_keys:bool=True) -> None
     if select_keys:
         select_info_keys = {
             "id", "track", "title", "artist", "album", "year", "picture", 
-            "url", 
+            "url", "lyrics", 
         }
         info = {k:v for k,v in info.items() if k in select_info_keys}
     
@@ -47,17 +47,31 @@ def print_video_info(info:dict, print_len:int=60, select_keys:bool=True) -> None
     print(f"{'└':─<{print_len}}─┘")
 
 #%% Function to get video information
-def get_video_info(url: str, ydl_opts: dict=None, derive_missing: bool=True) -> dict:
+def get_video_info(url: str, derive_missing: bool=True) -> dict:
     """Get video information from YouTube URL using yt-dlp.
     Args:
         url (str): YouTube video URL
-        ydl_opts (dict, optional): Optional dictionary with yt-dlp specifications.
+        subtitle_lang (str): Preferred subtitle language code (e.g., 'pt', 'pt-BR', 'en'). 
+            Defaults to 'pt'.
         derive_missing (bool): Whether to derive missing metadata fields. 
             Defaults to True.
     Returns:
         dict: Dictionary containing video information
         
     """
+    ydl_opts = {
+        'skip_download': True,  # Don't download video/audio
+        'writesubtitles': True,  # Download subtitles
+        'writeautomaticsub': True,  # Download auto-generated captions if no manual subs
+        'subtitleslangs': ['pt-BR','pt', 'en'],  # Prefer specified language, fallback to pt-BR/pt
+        'subtitlesformat': 'vtt', # Subtitle format
+        'no_warnings': True,  # Suppress warnings
+        'quiet': False,  # Show essential output
+        'extract_flat': False,  # Get full metadata (not just playlist info)
+        'http_headers': {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+        },
+    }
     try: #Get info without downloading
         info = YoutubeDL(ydl_opts).extract_info(url, download=False)
         
@@ -133,14 +147,14 @@ if __name__ == "__main__":
     """
     Script to execute and test functions defined in this module.
     """
-    TEST_URL = "https://www.youtube.com/watch?v=Ez8-GezfJy4"
+    TEST_URL = "https://www.youtube.com/watch?v=Xw8PtzHgHZo"
     print(f"Testing get_video_info with URL: {TEST_URL}")
     
     # Checking function to validade url
     test_url = get_validated_url(TEST_URL)
     
     # Checking function to get video info
-    video_info = get_video_info(test_url)
+    video_info = get_video_info(test_url, derive_missing=False)
     
     # Checking function to print video info
     print_video_info(video_info, select_keys=False)

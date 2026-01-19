@@ -23,6 +23,7 @@ def extract_metadata_from_description(song_description: str, model:str="zai-org/
     """
     Extract metadata from song description using a Hugging Face language model.
     """
+    print(f"🤖 Extracting now with HF model: {model}")
     response = query({
         "messages": [
             {
@@ -45,7 +46,8 @@ def extract_metadata_from_description(song_description: str, model:str="zai-org/
         
                 Expected Metadata:
                 A python dictionary with the following keys and their corresponding values:
-                'Track', 'Artist', 'Participating Artists', 'Album', 'Original song', 'Composers', 'Release Year', 'Genre'.
+                'Track', 'Artist', 'Participating Artists', 'Album', 'Original song', 
+                'Composers', 'Release Year', 'Genre', 'Lyrics'.
                 
                 Guidelines:
                 - Include all the keys even if some values are None.
@@ -76,9 +78,9 @@ def extract_metadata_from_description(song_description: str, model:str="zai-org/
     return derived_metadata_dict
 
 #%%
-def print_extracted_metadata(derived_metadata_dict: dict):
+def print_extracted_metadata(metadata: dict):
     print("LLM Extracted Metadata:")
-    for key, val in derived_metadata_dict.items():
+    for key, val in metadata.items():
         print(f"{str(key)[:24]:-<25}{str(val)[:45]}")
 
 
